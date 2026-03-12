@@ -3,7 +3,7 @@
 
 ## Запуск в powershell
 
-1. git clone -b master https://github.com/truehack/maxsmilelabs.git
+1. git clone https://github.com/truehack/maxsmilelabs.git
 2. cd maxsmilelabs
 3. gcc binarytree.c -o binarytree.exe
 4. .\binarytree.exe
