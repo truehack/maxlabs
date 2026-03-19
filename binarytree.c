@@ -7,6 +7,7 @@ typedef struct Tree {
     struct Tree* right;
 } Tree;
 
+
 Tree* createNode(int value) {
     Tree* node = (Tree*)malloc(sizeof(Tree));
     node->value = value;
@@ -14,6 +15,7 @@ Tree* createNode(int value) {
     node->right = NULL;
     return node;
 }
+
 
 Tree* insert(Tree* root, int value) {
     if (root == NULL) return createNode(value);
@@ -24,11 +26,13 @@ Tree* insert(Tree* root, int value) {
     return root;
 }
 
+
 Tree* findMin(Tree* node) {
     while (node && node->left != NULL)
         node = node->left;
     return node;
 }
+
 
 Tree* deleteNode(Tree* root, int value) {
     if (root == NULL) return root;
@@ -53,13 +57,39 @@ Tree* deleteNode(Tree* root, int value) {
     return root;
 }
 
-void printTree(Tree* root, int depth) {
-    if (root == NULL) return;
-    for (int i = 0; i < depth; i++) printf("    ");
-    printf("%d\n", root->value);
-    printTree(root->left, depth + 1);
-    printTree(root->right, depth + 1);
+
+int getHeight(Tree* root) {
+    if (root == NULL) return 0;
+    int leftH = getHeight(root->left);
+    int rightH = getHeight(root->right);
+    return (leftH > rightH ? leftH : rightH) + 1;
 }
+
+
+void printLevel(Tree* root, int level) {
+    if (root == NULL) return;
+    if (level == 1) 
+        printf("%d ", root->value);
+    else {
+        printLevel(root->left, level - 1);
+        printLevel(root->right, level - 1);
+    }
+}
+
+
+void printTreeVertical(Tree* root) {
+    if (root == NULL) {
+        printf("Tree is empty.\n");
+        return;
+    }
+    int height = getHeight(root);
+    for (int i = 1; i <= height; i++) {
+        printf("%d: ", i);
+        printLevel(root, i);
+        printf("\n");
+    }
+}
+
 
 void freeTree(Tree* root) {
     if (root == NULL) return;
@@ -67,6 +97,7 @@ void freeTree(Tree* root) {
     freeTree(root->right);
     free(root);
 }
+
 
 int countNodesWhereDegreeEqualsValue(Tree* root) {
     if (root == NULL) return 0;
@@ -79,6 +110,7 @@ int countNodesWhereDegreeEqualsValue(Tree* root) {
     return count;
 }
 
+
 void showMenu() {
     printf("1. Add node\n");
     printf("2. Delete node\n");
@@ -89,12 +121,15 @@ void showMenu() {
     printf("Choice: ");
 }
 
+
 int main() {
     Tree* root = NULL;
     int choice, value;
+    
     while (1) {
         showMenu();
         scanf("%d", &choice);
+        
         switch (choice) {
             case 1:
                 printf("Enter value: ");
@@ -102,32 +137,43 @@ int main() {
                 root = insert(root, value);
                 printf("Node %d added.\n", value);
                 break;
+                
             case 2:
+                if (!root) {
+                        printf("Tree is empty. Nothing to delete.\n");
+                        break;
+                    }
                 printf("Enter value: ");
                 scanf("%d", &value);
                 root = deleteNode(root, value);
                 printf("Node %d deleted.\n", value);
                 break;
+                
             case 3:
-                if (!root) printf("Tree is empty.\n");
-                else printTree(root, 0);
+                printTreeVertical(root);
                 break;
+                
             case 4:
-                if (!root) printf("Tree is empty.\n");
-                else {
+                if (!root) {
+                    printf("Tree is empty.\n");
+                } else {
                     int r = countNodesWhereDegreeEqualsValue(root);
-                    printf("Result: %d\n", r);
+                    printf("Result: %d nodes where degree equals value\n", r);
                 }
                 break;
+                
             case 5:
-                freeTree(root); root = NULL;
+                freeTree(root);
+                root = NULL;
                 printf("Tree cleared.\n");
                 break;
+                
             case 0:
                 freeTree(root);
                 return 0;
+                
             default:
-                printf("Invalid choice.\n");
+                printf("Invalid choice. Try again.\n");
         }
     }
 }
