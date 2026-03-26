@@ -7,32 +7,28 @@ typedef struct Tree {
     struct Tree* right;
 } Tree;
 
-
 Tree* createNode(int value) {
-    Tree* node = (Tree*)malloc(sizeof(Tree));
-    node->value = value;
-    node->left = NULL;
-    node->right = NULL;
-    return node;
+    Tree* root = (Tree*)malloc(sizeof(Tree));
+    root->value = value;
+    root->left = NULL;
+    root->right = NULL;
+    return root;
 }
-
 
 Tree* insert(Tree* root, int value) {
     if (root == NULL) return createNode(value);
     if (value < root->value)
         root->left = insert(root->left, value);
-    else if (value > root->value)
+    else if (value >= root->value) 
         root->right = insert(root->right, value);
     return root;
 }
 
-
-Tree* findMin(Tree* node) {
-    while (node && node->left != NULL)
-        node = node->left;
-    return node;
+Tree* findMin(Tree* root) {
+    if (root == NULL) return root;
+    if (root->left == NULL) return root;
+    return findMin(root->right);
 }
-
 
 Tree* deleteNode(Tree* root, int value) {
     if (root == NULL) return root;
@@ -45,7 +41,8 @@ Tree* deleteNode(Tree* root, int value) {
             Tree* temp = root->right;
             free(root);
             return temp;
-        } else if (root->right == NULL) {
+        }
+        else if (root->right == NULL) {
             Tree* temp = root->left;
             free(root);
             return temp;
@@ -57,25 +54,26 @@ Tree* deleteNode(Tree* root, int value) {
     return root;
 }
 
-
 int getHeight(Tree* root) {
     if (root == NULL) return 0;
     int leftH = getHeight(root->left);
     int rightH = getHeight(root->right);
-    return (leftH > rightH ? leftH : rightH) + 1;
+    if (leftH > rightH) return leftH + 1;
+    else {
+        return rightH + 1;
+    }
 }
-
 
 void printLevel(Tree* root, int level) {
     if (root == NULL) return;
-    if (level == 1) 
+    if (level == 1) {
         printf("%d ", root->value);
+    }
     else {
         printLevel(root->left, level - 1);
         printLevel(root->right, level - 1);
     }
 }
-
 
 void printTreeVertical(Tree* root) {
     if (root == NULL) {
@@ -90,7 +88,6 @@ void printTreeVertical(Tree* root) {
     }
 }
 
-
 void freeTree(Tree* root) {
     if (root == NULL) return;
     freeTree(root->left);
@@ -98,18 +95,16 @@ void freeTree(Tree* root) {
     free(root);
 }
 
-
 int countNodesWhereDegreeEqualsValue(Tree* root) {
     if (root == NULL) return 0;
     int count = 0, degree = 0;
-    if (root->left != NULL) degree++;
-    if (root->right != NULL) degree++;
+    if (root->left != NULL) degree ++;
+    if (root->right != NULL) degree ++;
     if (degree == root->value) count = 1;
     count += countNodesWhereDegreeEqualsValue(root->left);
     count += countNodesWhereDegreeEqualsValue(root->right);
     return count;
 }
-
 
 void showMenu() {
     printf("1. Add node\n");
@@ -177,3 +172,4 @@ int main() {
         }
     }
 }
+
